@@ -1,0 +1,6 @@
+txt/water_token.txt
+txt/history_message.txt
+txt/marks.txt
+txt/access_token.txt
+.vscode/
+__pycache__/
