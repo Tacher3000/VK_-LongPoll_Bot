@@ -26,7 +26,7 @@ class MyVkLongPoll(VkLongPoll):
 
 def main():
     print("запустилось")
-    token = f.open_txt('access_token.txt')
+    # token = f.open_txt('access_token.txt')
     vk_session = VkApi(token=token)
     longpoll = MyVkLongPoll(vk_session)
     
