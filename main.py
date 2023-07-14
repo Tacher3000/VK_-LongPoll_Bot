@@ -28,6 +28,7 @@ def main():
     print("запустилось")
     # token = f.open_txt('access_token.txt')
     vk_session = VkApi(token=token)
+    vk = vk_session.get_api()
     longpoll = MyVkLongPoll(vk_session)
     
     # +1 день но временно отключен
