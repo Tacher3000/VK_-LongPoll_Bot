@@ -1,4 +1,4 @@
-pip install vk_api
-pip install requests
-#pip install translate # не устанавливается, но надо в будущем
-# pip install openai # не устанавливается, но надо в будущем
+vk_api
+requests
+translate # не устанавливается, но надо в будущем
+openai # не устанавливается, но надо в будущем
