@@ -38,7 +38,7 @@ def count_lines(txt_name):
 
 
 # token = open_txt('access_token.txt')
-vk_session = VkApi(token=TOKEN)
+vk_session = VkApi(token=token)
 vk = vk_session.get_api()
 slovar = {'привет': 'Привет!',
           'как дела': 'Хорошо, а у тебя?',
