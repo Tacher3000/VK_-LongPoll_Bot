@@ -37,7 +37,7 @@ def count_lines(txt_name):
         return line_count
 
 
-token = open_txt('access_token.txt')
+# token = open_txt('access_token.txt')
 vk_session = VkApi(token=token)
 vk = vk_session.get_api()
 slovar = {'привет': 'Привет!',
