@@ -38,18 +38,14 @@ def count_lines(txt_name):
 
 
 # token = open_txt('access_token.txt')
-# vk_session = VkApi(token=token)
-# vk = vk_session.get_api()
+token = os.environ["TOKEN"]
+vk_session = VkApi(token=token)
+vk = vk_session.get_api()
 
 slovar = {'привет': 'Привет!',
           'как дела': 'Хорошо, а у тебя?',
           'как дела?': 'иди нахуй(без обид)',
           'воткинск': 'Столица мира'}
-
-global vk
-
-def global_vk(vk1):
-    vk = vk1
 
 # отправляет сообщениие
 def send_message(id, message):  
