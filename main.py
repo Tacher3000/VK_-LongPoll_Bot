@@ -67,6 +67,8 @@ def main():
                         f.check_in(id)
                     elif message == 'сколько осталось?' or message == 'остаток' or message == 'сколько':
                         f.send_message(id, f.passed())
+                    elif message == 'проверка':
+                        f.chatGPT()
 
             if message == '!команды':
                 f.send_message(id, f.open_txt('comands.txt'))
