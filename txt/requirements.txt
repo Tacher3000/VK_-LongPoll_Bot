@@ -2,3 +2,6 @@ vk_api
 requests
 translate # не устанавливается, но надо в будущем
 openai # не устанавливается, но надо в будущем
+
+beautifulsoup4
+pandas
