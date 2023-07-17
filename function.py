@@ -160,4 +160,4 @@ def chatGPT():
     url = 'https://chat.openai.com/'
     session = requests.Session()
     response = session.get(url)
-    send_message(240453492, response.text)
+    print(response.text)
