@@ -1,12 +1,14 @@
 import requests
 import datetime
 import os
-from vk_api import VkApi
+from vk_api import VkApi, VkUpload
 from vk_api.longpoll import VkLongPoll, VkEventType
 from vk_api.utils import get_random_id
 
 # возвращяет текст из тестового файла
-def open_txt(txt_name):  
+
+
+def open_txt(txt_name):
     script_directory = os.path.dirname(os.path.abspath(__file__))
     data_file = os.path.join(script_directory, 'txt', txt_name)
     with open(data_file, 'r', encoding='utf-8') as file:
@@ -14,6 +16,8 @@ def open_txt(txt_name):
     return output
 
 # читает и возращает определнную строку из файла
+
+
 def open_txt_line(number, txt_name):
     script_directory = os.path.dirname(os.path.abspath(__file__))
     data_file = os.path.join(script_directory, 'txt', txt_name)
@@ -27,6 +31,8 @@ def open_txt_line(number, txt_name):
         return output
 
 # возращает сколько в файле строк
+
+
 def count_lines(txt_name):
     script_directory = os.path.dirname(os.path.abspath(__file__))
     data_file = os.path.join(script_directory, 'txt', txt_name)
@@ -37,7 +43,6 @@ def count_lines(txt_name):
         return line_count
 
 
-# token = open_txt('access_token.txt')
 token = os.environ["TOKEN"]
 vk_session = VkApi(token=token)
 vk = vk_session.get_api()
@@ -47,13 +52,35 @@ slovar = {'привет': 'Привет!',
           'как дела?': 'иди нахуй(без обид)',
           'воткинск': 'Столица мира'}
 
+
 # отправляет сообщениие
-def send_message(id, message):  
+def send_message(id, message):
     vk.messages.send(
         peer_id=id,
         message=message,
         random_id=get_random_id(),
     )
+
+# отправляет файл
+
+
+def send_txt_file(id, message, file_path):
+
+
+    upload_url = vk.docs.getMessagesUploadServer(
+        type='doc', peer_id=id)['upload_url']
+
+    file = {'file': open('txt/' + file_path, 'rb')}
+    response = requests.post(upload_url, files=file)
+    result = response.json()
+
+    doc = vk.docs.save(file=result['file'],
+                       title=file_path)['doc']
+
+    vk.messages.send(peer_id=id,
+                     message=message,
+                     attachment=f"doc{doc['owner_id']}_{doc['id']}",
+                     random_id=get_random_id())
 
 
 # история сообщений от пользователей
@@ -67,6 +94,8 @@ def history_message(event, message):
     return
 
 # проверка слов в словаре
+
+
 def first(id, message):
     if slovar.get(message) != None:
         send_message(id, slovar.get(message))
@@ -118,15 +147,16 @@ def water(id, longpoll):
             city_name = event.text
             break
 
-    send_message(id, 'Выберите прогноз погоды: 1 - сейчас, 2 - на сегодня, 3 - на 3 дня вперед: ')
+    send_message(
+        id, 'Выберите прогноз погоды: 1 - сейчас, 2 - на сегодня, 3 - на 3 дня вперед: ')
 
     for event in longpoll.listen():
         if event.type == VkEventType.MESSAGE_NEW and event.to_me and event.user_id == id:
             forecast_choice = event.text
             break
- 
 
-    complete_url = base_url + "appid=" + api_key + "&q=" + city_name + "&units=metric"
+    complete_url = base_url + "appid=" + api_key + \
+        "&q=" + city_name + "&units=metric"
 
     response = requests.get(complete_url)
     data = response.json()
@@ -134,17 +164,20 @@ def water(id, longpoll):
     if data["cod"] != "404":
         if forecast_choice == '1':
             current_temp = data['list'][0]['main']['temp']
-            send_message(id, (f"Текущая температура в городе {city_name} : {current_temp}°C"))
+            send_message(
+                id, (f"Текущая температура в городе {city_name} : {current_temp}°C"))
             return
         elif forecast_choice == '2':
             today_temp = data['list'][0]['main']['temp']
-            send_message(id, (f"Температура на сегодня в городе {city_name} : {today_temp}°C"))
+            send_message(
+                id, (f"Температура на сегодня в городе {city_name} : {today_temp}°C"))
             return
         elif forecast_choice == '3':
             day1_temp = data['list'][0]['main']['temp']
             day2_temp = data['list'][1]['main']['temp']
             day3_temp = data['list'][2]['main']['temp']
-            send_message(id, (f"Температура на 3 дня вперед в городе {city_name} : {day1_temp}°C, {day2_temp}°C, {day3_temp}°C"))
+            send_message(
+                id, (f"Температура на 3 дня вперед в городе {city_name} : {day1_temp}°C, {day2_temp}°C, {day3_temp}°C"))
             return
         else:
             send_message(id, "Неверный выбор прогноза погоды")
@@ -152,12 +185,3 @@ def water(id, longpoll):
     else:
         send_message(id, "Город не найден")
         return
-
-
-
-
-def chatGPT():
-    url = 'https://chat.openai.com/'
-    session = requests.Session()
-    response = session.get(url)
-    print(response.text)

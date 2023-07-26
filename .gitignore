@@ -1,4 +1,5 @@
 txt/access_token.txt
+txt/diary.txt
 .vscode/
 __pycache__/
 test.py
