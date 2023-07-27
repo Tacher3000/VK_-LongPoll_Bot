@@ -28,7 +28,7 @@ vk = vk_session.get_api()
 
 def open_txt(txt_name):
     script_directory = os.path.dirname(os.path.abspath(__file__))
-    data_file = os.path.join(script_directory, 'txt', txt_name)
+    data_file = os.path.join(script_directory, 'data/txt', txt_name)
     with open(data_file, 'r', encoding='utf-8') as file:
         output = file.read()
     return output
@@ -38,7 +38,7 @@ def open_txt(txt_name):
 
 def open_txt_line(number, txt_name):
     script_directory = os.path.dirname(os.path.abspath(__file__))
-    data_file = os.path.join(script_directory, 'txt', txt_name)
+    data_file = os.path.join(script_directory, 'data/txt', txt_name)
     with open(data_file, 'r', encoding='utf-8') as file:
         if number == 1:
             output = file.readline()
@@ -53,7 +53,7 @@ def open_txt_line(number, txt_name):
 
 def count_lines(txt_name):
     script_directory = os.path.dirname(os.path.abspath(__file__))
-    data_file = os.path.join(script_directory, 'txt', txt_name)
+    data_file = os.path.join(script_directory, 'data/txt', txt_name)
     with open(data_file, 'r', encoding='utf-8') as file:
         line_count = 0
         for line in file:
@@ -77,7 +77,7 @@ def send_txt_file(id, message, file_path):
     upload_url = vk.docs.getMessagesUploadServer(
         type='doc', peer_id=id)['upload_url']
 
-    file = {'file': open('txt/' + file_path, 'rb')}
+    file = {'file': open('data/txt/' + file_path, 'rb')}
     response = requests.post(upload_url, files=file)
     result = response.json()
 
@@ -96,7 +96,7 @@ def send_images(id, message, images_path):
     upload_url = vk_session.method('photos.getMessagesUploadServer', {
                                    'peer_id': id})['upload_url']
     response = requests.post(
-        upload_url, files={'photo': open('images/' + images_path, 'rb')}).json()
+        upload_url, files={'photo': open('data/images/' + images_path, 'rb')}).json()
     photo_data = vk_session.method('photos.saveMessagesPhoto', {
                                    'photo': response['photo'], 'server': response['server'], 'hash': response['hash']})[0]
     attachment = f"photo{photo_data['owner_id']}_{photo_data['id']}_{photo_data['access_key']}"
@@ -109,7 +109,7 @@ def send_images(id, message, images_path):
 # история сообщений от пользователей
 def history_message(event, message):
     script_directory = os.path.dirname(os.path.abspath(__file__))
-    data_file = os.path.join(script_directory, 'txt/history_message.txt')
+    data_file = os.path.join(script_directory, 'data/txt/history_message.txt')
     file = open(data_file, 'a', encoding='utf-8')
     file.write(
         f"{event.datetime}\tпользователь {event.user_id} написал: {message}\n")
@@ -120,7 +120,7 @@ def history_message(event, message):
 # функции для отметок
 def mark1():  # +1 день (запускается каждый раз при перезагрузке программы)
     script_directory = os.path.dirname(os.path.abspath(__file__))
-    data_file = os.path.join(script_directory, 'txt/marks.txt')
+    data_file = os.path.join(script_directory, 'data/txt/marks.txt')
     file = open(data_file, 'r+', encoding='utf-8')
     n = int(file.read())
     file.seek(0, 0)
@@ -131,7 +131,7 @@ def mark1():  # +1 день (запускается каждый раз при �
 
 def check_in(id):  # обнуляет дни
     script_directory = os.path.dirname(os.path.abspath(__file__))
-    data_file = os.path.join(script_directory, 'txt/marks.txt')
+    data_file = os.path.join(script_directory, 'data/txt/marks.txt')
     file = open(data_file, 'r+', encoding='utf-8')
     file.seek(0, 0)
     file.truncate(0)
@@ -143,7 +143,7 @@ def check_in(id):  # обнуляет дни
 
 def passed():  # возращает сколько дней осталось
     script_directory = os.path.dirname(os.path.abspath(__file__))
-    data_file = os.path.join(script_directory, 'txt/marks.txt')
+    data_file = os.path.join(script_directory, 'data/txt/marks.txt')
     file = open(data_file, 'r', encoding='utf-8')
     n = file.read()
     file.close()
@@ -208,12 +208,12 @@ def water(id, longpoll):
 def diary():
     # удаляем старый файл если он есть
     try:
-        os.remove('txt/diary.txt')
+        os.remove('data/txt/diary.txt')
     except FileNotFoundError:
         print('Файл для удаления не найден.')
 
     # скачиваем новый с яндекс диска
-    y.download('/diary.txt', 'txt/diary.txt')
+    y.download('/diary.txt', 'data/txt/diary.txt')
 
     # отправляем файл каждому человеку из списка
     for j in range(count_lines('trusted_people.txt')):
@@ -231,5 +231,5 @@ def download_images_yadisk():
             photo_names.append(item.name)
 
     random_photo = random.choice(photo_names)
-    y.download(f'{path}/{random_photo}', 'images/' + random_photo)
+    y.download(f'{path}/{random_photo}', 'data/images/' + random_photo)
     return random_photo

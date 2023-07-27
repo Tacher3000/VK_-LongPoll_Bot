@@ -120,7 +120,7 @@ def main():
                         random_image = f.download_images_yadisk()
                         f.send_images(id, '', random_image)
                         try:
-                            os.remove('images/' + random_image)
+                            os.remove('data/images/' + random_image)
                         except FileNotFoundError:
                             print(
                                 'изображение для удаления не найдено(что странно).')
@@ -149,7 +149,7 @@ def main():
                         random_image = f.download_images_yadisk()
                         f.send_images(id, '', random_image)
                         try:
-                            os.remove('images/' + random_image)
+                            os.remove('data/images/' + random_image)
                         except FileNotFoundError:
                             print(
                                 'изображение для удаления не найдено(что странно).')
@@ -170,7 +170,7 @@ def main():
                         random_image = f.download_images_yadisk()
                         f.send_images(id, '', random_image)
                         try:
-                            os.remove('images/' + random_image)
+                            os.remove('data/images/' + random_image)
                         except FileNotFoundError:
                             print(
                                 'изображение для удаления не найдено(что странно).')
