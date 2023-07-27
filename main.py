@@ -116,6 +116,15 @@ def main():
                                     f.send_message(id, 'Отправка отменена')
                                     break
                         k += 1
+                    elif message == '!рандом':
+                        random_image = f.download_images_yadisk()
+                        f.send_images(id, '', random_image)
+                        try:
+                            os.remove('images/' + random_image)
+                        except FileNotFoundError:
+                            print(
+                                'изображение для удаления не найдено(что странно).')
+                        k += 1
 
             if k == 1:
                 continue
@@ -157,6 +166,15 @@ def main():
                 f.send_message(id, f.open_txt('comands.txt'))
             elif message == '!погода':
                 f.water(id, longpoll)
+            elif message == '!рандом':
+                        random_image = f.download_images_yadisk()
+                        f.send_images(id, '', random_image)
+                        try:
+                            os.remove('images/' + random_image)
+                        except FileNotFoundError:
+                            print(
+                                'изображение для удаления не найдено(что странно).')
+                        k += 1
 
 
 if __name__ == '__main__':
