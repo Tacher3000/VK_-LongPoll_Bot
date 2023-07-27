@@ -1,9 +1,15 @@
 import requests
 import datetime
 import os
+import yadisk
 from vk_api import VkApi, VkUpload
 from vk_api.longpoll import VkLongPoll, VkEventType
 from vk_api.utils import get_random_id
+
+
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 # возвращяет текст из тестового файла
 
@@ -47,10 +53,6 @@ token = os.environ["TOKEN"]
 vk_session = VkApi(token=token)
 vk = vk_session.get_api()
 
-slovar = {'привет': 'Привет!',
-          'как дела': 'Хорошо, а у тебя?',
-          'как дела?': 'иди нахуй(без обид)',
-          'воткинск': 'Столица мира'}
 
 
 # отправляет сообщениие
@@ -92,13 +94,6 @@ def history_message(event, message):
         f"{event.datetime}\tпользователь {event.user_id} написал: {message}\n")
     file.close()
     return
-
-# проверка слов в словаре
-
-
-def first(id, message):
-    if slovar.get(message) != None:
-        send_message(id, slovar.get(message))
 
 
 # функции для отметок
@@ -185,3 +180,22 @@ def water(id, longpoll):
     else:
         send_message(id, "Город не найден")
         return
+
+
+def diary():
+    # удаляем старый файл если он есть
+    try:
+        os.remove('txt/diary.txt')
+    except FileNotFoundError:
+        print('Файл для удаления не найден.')
+
+    # скачиваем новый с яндекс диска
+    yadisk_token = os.environ['YADISK_TOKEN']
+    y = yadisk.YaDisk(
+        token=yadisk_token)
+    y.download('/diary.txt', 'txt/diary.txt')
+
+    # отправляем файл каждому человеку из списка
+    for j in range(count_lines('trusted_people.txt')):
+        send_txt_file(
+            int(open_txt_line(j, 'trusted_people.txt')), 'мой дневник, сообщение оптравлено автоматически', 'diary.txt')

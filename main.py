@@ -1,5 +1,4 @@
 import requests
-import yadisk
 import time
 import os
 from vk_api import VkApi
@@ -7,7 +6,24 @@ from vk_api.longpoll import VkLongPoll, VkEventType
 import function as f
 
 
-# чтобы не выключался каждую ночь + когда срабатывает исключение добавляется +1
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
+
+# через сколько дней попросят отметиться
+warning = 2
+
+# через сколько дней без отметок отправится дневник
+deadline = 3
+
+
+slovar = {'привет': 'Привет!',
+          'как дела': 'Хорошо, а у тебя?',
+          'как дела?': 'иди нахуй(без обид)',
+          'воткинск': 'Столица мира'}
+
+# чтобы не выключался каждую ночь + когда срабатывает исключение добавляется +1 и происходит проверка на колличество дней
 class MyVkLongPoll(VkLongPoll):
     def listen(self):
         while True:
@@ -22,8 +38,16 @@ class MyVkLongPoll(VkLongPoll):
                 f.mark1()
 
                 # проверка на колличество дней
-                if int(f.passed()) >= 7:
-                    f.send_message(240453492, 'в маркс больше 7 дней')
+                if int(f.passed()) >= warning and int(f.passed()) < deadline:
+                    f.send_message(
+                        240453492, f'с последней отметки прошло {warning} или больше дней. Пожалуйста отметься')
+                    f.send_message(
+                        240453492, f'через столько дней:{deadline - warning} дневник будет отправлен')
+
+                if int(f.passed()) >= deadline:
+                    f.send_message(
+                        240453492, f'в маркс больше {deadline} дней')
+                    f.diary()
 
 
 def main():
@@ -34,15 +58,8 @@ def main():
     vk = vk_session.get_api()
     longpoll = MyVkLongPoll(vk_session)
 
-    # +1 день но временно отключен
-    # f.mark1()
-
     # оповещает о перезапуске в будущем убрать(тест)
     # f.send_message(240453492, 'произошел перезапуск')
-
-    # проверка на колличество дней
-    if int(f.passed()) >= 7:
-        f.send_message(240453492, 'в маркс больше 7 дней')
 
     for event in longpoll.listen():
         if event.type == VkEventType.MESSAGE_NEW and event.to_me:
@@ -71,9 +88,12 @@ def main():
                     elif message == '!проверка':
                         f.send_message(id, 'проверки пока что нет')
                     elif message == '!команды':
-                        f.send_message(id, f.open_txt('administrators_comands.txt'))
+                        f.send_message(id, f.open_txt(
+                            'administrators_comands.txt'))
                     elif message == '!погода':
                         f.water(id, longpoll)
+                    elif slovar.get(message) != None:
+                        f.send_message(id, slovar.get(message))
                     elif message == '!отправь':
                         f.send_message(
                             id, 'Ты точно хочешь это сделать? [Y - да, N - нет]')
@@ -81,57 +101,28 @@ def main():
                         for e in longpoll.listen():
                             if e.type == VkEventType.MESSAGE_NEW and e.to_me:
                                 if e.text == 'Y':
-                                    # удаляем старый файл если он есть
-                                    try:
-                                        os.remove('txt/diary.txt')
-                                        print('Файл успешно удален.')
-                                    except FileNotFoundError:
-                                        print('Файл для удаления не найден.')
-
-                                    # скачиваем новый с яндекс диска
-                                    yadisk_token = os.environ['YADISK_TOKEN']
-                                    y = yadisk.YaDisk(
-                                        token=yadisk_token)
-                                    y.download('/diary.txt', 'txt/diary.txt')
-
-                                    # отправляем файл каждому человеку из списка
-                                    for j in range(f.count_lines('trusted_people.txt')):
-                                        f.send_txt_file(
-                                            int(f.open_txt_line(j, 'trusted_people.txt')), 'мой дневник, сообщение оптравлено автоматически', 'diary.txt')
+                                    f.diary()
                                     break
                                 else:
                                     f.send_message(id, 'Отправка отменена')
                                     break
 
-
             # проверка на людей из списка проверенных людей
             for i in range(f.count_lines('trusted_people.txt')):
                 if id == int(f.open_txt_line(i, 'trusted_people.txt')):
                     if (message == '!отправь'):
-                        # удаляем старый файл если он есть
-                        try:
-                            os.remove('txt/diary.txt')
-                            print('Файл успешно удален.')
-                        except FileNotFoundError:
-                            print('Файл для удаления не найден.')
-                        
-                        # скачиваем новый с яндекс диска
-                        yadisk_token = os.environ['YADISK_TOKEN']
-                        y = yadisk.YaDisk(
-                            token=yadisk_token)
-                        y.download('/diary.txt', 'txt/diary.txt')
-
-                        # отправляем файл
-                        f.send_txt_file(
-                            id, 'мой дневник, сообщение оптравлено автоматически', 'diary.txt')
+                        f.diary()
+                    elif slovar.get(message) != None:   
+                        f.send_message(id, slovar.get(message))
                     elif message == '!команды':
-                        f.send_message(id, f.open_txt('trusted_people_comands.txt'))
+                        f.send_message(id, f.open_txt(
+                            'trusted_people_comands.txt'))
                     elif message == '!погода':
                         f.water(id, longpoll)
                     else:
                         f.send_message(
                             id, 'Ларочка, к сожалению, я всего лишь бот')
-            
+
             if message == '!команды':
                 f.send_message(id, f.open_txt('comands.txt'))
             elif message == '!погода':
