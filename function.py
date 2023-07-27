@@ -1,6 +1,7 @@
 import requests
 import datetime
 import os
+import random
 import yadisk
 from vk_api import VkApi, VkUpload
 from vk_api.longpoll import VkLongPoll, VkEventType
@@ -10,6 +11,17 @@ from vk_api.utils import get_random_id
 import os
 from dotenv import load_dotenv
 load_dotenv()
+
+# Для яндекс диска
+yadisk_token = os.environ['YADISK_TOKEN']
+y = yadisk.YaDisk(
+    token=yadisk_token)
+
+# для вк
+token = os.environ["TOKEN"]
+vk_session = VkApi(token=token)
+vk = vk_session.get_api()
+
 
 # возвращяет текст из тестового файла
 
@@ -49,12 +61,6 @@ def count_lines(txt_name):
         return line_count
 
 
-token = os.environ["TOKEN"]
-vk_session = VkApi(token=token)
-vk = vk_session.get_api()
-
-
-
 # отправляет сообщениие
 def send_message(id, message):
     vk.messages.send(
@@ -67,7 +73,6 @@ def send_message(id, message):
 
 
 def send_txt_file(id, message, file_path):
-
 
     upload_url = vk.docs.getMessagesUploadServer(
         type='doc', peer_id=id)['upload_url']
@@ -82,6 +87,22 @@ def send_txt_file(id, message, file_path):
     vk.messages.send(peer_id=id,
                      message=message,
                      attachment=f"doc{doc['owner_id']}_{doc['id']}",
+                     random_id=get_random_id())
+
+# отправляет изображения
+
+
+def send_images(id, message, images_path):
+    upload_url = vk_session.method('photos.getMessagesUploadServer', {
+                                   'peer_id': id})['upload_url']
+    response = requests.post(
+        upload_url, files={'photo': open('images/' + images_path, 'rb')}).json()
+    photo_data = vk_session.method('photos.saveMessagesPhoto', {
+                                   'photo': response['photo'], 'server': response['server'], 'hash': response['hash']})[0]
+    attachment = f"photo{photo_data['owner_id']}_{photo_data['id']}_{photo_data['access_key']}"
+    vk.messages.send(peer_id=id,
+                     message=message,
+                     attachment=attachment,
                      random_id=get_random_id())
 
 
@@ -181,6 +202,8 @@ def water(id, longpoll):
         send_message(id, "Город не найден")
         return
 
+# отправляет дневник
+
 
 def diary():
     # удаляем старый файл если он есть
@@ -190,12 +213,23 @@ def diary():
         print('Файл для удаления не найден.')
 
     # скачиваем новый с яндекс диска
-    yadisk_token = os.environ['YADISK_TOKEN']
-    y = yadisk.YaDisk(
-        token=yadisk_token)
     y.download('/diary.txt', 'txt/diary.txt')
 
     # отправляем файл каждому человеку из списка
     for j in range(count_lines('trusted_people.txt')):
         send_txt_file(
             int(open_txt_line(j, 'trusted_people.txt')), 'мой дневник, сообщение оптравлено автоматически', 'diary.txt')
+        
+
+def download_images_yadisk():
+    photo_names = []
+
+    path = '/x18'
+
+    for item in y.listdir(path):
+        if item.type == 'file':
+            photo_names.append(item.name)
+
+    random_photo = random.choice(photo_names)
+    y.download(f'{path}/{random_photo}', 'images/' + random_photo)
+    return random_photo
