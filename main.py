@@ -125,6 +125,10 @@ def main():
                             print(
                                 'изображение для удаления не найдено(что странно).')
                         k += 1
+                    elif message == '!прибавить':
+                        f.mark1()
+                        f.send_message(id, 'добавлен 1 день')
+
 
             if k == 1:
                 continue
