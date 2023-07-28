@@ -1,6 +1,4 @@
-data/txt/access_token.txt
 data/txt/diary.txt
-data/txt/water_token.txt
 .vscode/
 __pycache__/
 test.py
