@@ -118,7 +118,7 @@ def history_message(event, message):
 
 
 # функции для отметок
-def mark1():  # +1 день (запускается каждый раз при перезагрузке программы)
+def mark1():  # +1 день (запускается каждую ночь)
     script_directory = os.path.dirname(os.path.abspath(__file__))
     data_file = os.path.join(script_directory, 'data/txt/marks.txt')
     file = open(data_file, 'r+', encoding='utf-8')
@@ -153,7 +153,7 @@ def passed():  # возращает сколько дней осталось
 # переделать прослушку
 # погода
 def water(id, longpoll):
-    api_key = open_txt('water_token.txt')
+    api_key = os.environ['TOKEN']
     base_url = "http://api.openweathermap.org/data/2.5/forecast?"
 
     send_message(id, 'Введите название города: ')
@@ -220,7 +220,7 @@ def diary():
         send_txt_file(
             int(open_txt_line(j, 'trusted_people.txt')), 'мой дневник, сообщение оптравлено автоматически', 'diary.txt')
         
-
+# скачивает изображение с яндекс диска
 def download_images_yadisk():
     photo_names = []
 
