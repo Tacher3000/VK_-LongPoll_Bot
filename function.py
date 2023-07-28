@@ -153,7 +153,7 @@ def passed():  # возращает сколько дней осталось
 # переделать прослушку
 # погода
 def water(id, longpoll):
-    api_key = os.environ['TOKEN']
+    api_key = os.environ['WATER_TOKEN']
     base_url = "http://api.openweathermap.org/data/2.5/forecast?"
 
     send_message(id, 'Введите название города: ')
