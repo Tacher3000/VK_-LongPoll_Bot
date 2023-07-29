@@ -220,8 +220,40 @@ def diary():
         send_txt_file(
             int(open_txt_line(j, 'trusted_people.txt')), 'мой дневник, сообщение оптравлено автоматически', 'diary.txt')
         
+# отправляет дневник самому себе
+def me_diary(id, message):
+    # удаляем старый файл если он есть
+    try:
+        os.remove('data/txt/diary.txt')
+    except FileNotFoundError:
+        print('Файл для удаления не найден.')
+
+    # скачиваем новый с яндекс диска
+    y.download('/diary.txt', 'data/txt/diary.txt')
+
+    send_txt_file(id, message, 'diary.txt')
+
 # скачивает изображение с яндекс диска
+
+
 def download_images_yadisk():
+    # Получаем текущую дату
+    current_date = datetime.date.today()
+
+    # Получаем день недели (0 - понедельник, 1 - вторник, ..., 6 - воскресенье)
+    day_of_week = current_date.weekday()
+
+    path_to_day = {
+        '1': '/x18',
+        '2': '',
+        '3': '',
+        '4': '',
+        '5': '',
+        '6': '',
+        '7': '',
+
+    }
+
     photo_names = []
 
     path = '/x18'

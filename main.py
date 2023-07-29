@@ -128,7 +128,10 @@ def main():
                     elif message == '!прибавить':
                         f.mark1()
                         f.send_message(id, 'добавлен 1 день')
-
+                        k += 1
+                    elif message == '!посмотреть':
+                        f.me_diary(id, '')
+                        k += 1
 
             if k == 1:
                 continue
