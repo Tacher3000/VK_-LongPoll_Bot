@@ -132,6 +132,14 @@ def main():
                     elif message == '!посмотреть':
                         f.me_diary(id, '')
                         k += 1
+                    elif message == '!дополнить' or message == '!добавить':
+                        f.send_message(id, 'введите что хотите добавить')
+                        for e in longpoll.listen():
+                            if e.type == VkEventType.MESSAGE_NEW and e.to_me:
+                                f.add_diary(e.text)
+                                break
+                        f.send_message(id, 'сообщение добавлено')
+                        k += 1
 
             if k == 1:
                 continue

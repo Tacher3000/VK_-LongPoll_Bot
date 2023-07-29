@@ -265,3 +265,19 @@ def download_images_yadisk():
     random_photo = random.choice(photo_names)
     y.download(f'{path}/{random_photo}', 'data/images/' + random_photo)
     return random_photo
+
+
+def add_diary(message):
+    try:
+        os.remove('data/txt/diary.txt')
+    except FileNotFoundError:
+        print('Файл для удаления не найден.')
+
+    # скачиваем новый с яндекс диска
+    y.download('/diary.txt', 'data/txt/diary.txt')
+
+    with open('data/txt/diary.txt', 'a', encoding='utf-8') as file:
+        # Здесь можем выполнить несколько записей
+        file.write(f'{message}\n\n')
+
+    y.upload('data/txt/diary.txt', '/diary.txt', overwrite = True)
