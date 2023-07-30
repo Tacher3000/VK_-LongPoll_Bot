@@ -12,10 +12,10 @@ load_dotenv()
 
 
 # через сколько дней попросят отметиться
-warning = 2
+warning = 5
 
 # через сколько дней без отметок отправится дневник
-deadline = 3
+deadline = 7
 
 
 slovar = {'привет': 'Привет!',
@@ -50,6 +50,8 @@ class MyVkLongPoll(VkLongPoll):
                     f.send_message(
                         240453492, f'в маркс больше {deadline} дней')
                     f.diary()
+                    f.send_message(
+                        240453492, 'дневник отправлен')
 
 
 def main():
@@ -77,9 +79,6 @@ def main():
 
             # id
             id = event.user_id
-
-            # если слово подходит к списку сообщение - ответ (временно отключен)
-            # f.first(id, message)
 
             # проверяет есть ли человек который пишет в списке администрации
             for i in range(f.count_lines('administrators.txt')):
@@ -182,14 +181,14 @@ def main():
             elif message == '!погода':
                 f.water(id, longpoll)
             elif message == '!рандом':
-                        random_image = f.download_images_yadisk()
-                        f.send_images(id, '', random_image)
-                        try:
-                            os.remove('data/images/' + random_image)
-                        except FileNotFoundError:
-                            print(
-                                'изображение для удаления не найдено(что странно).')
-                        k += 1
+                random_image = f.download_images_yadisk()
+                f.send_images(id, '', random_image)
+                try:
+                    os.remove('data/images/' + random_image)
+                except FileNotFoundError:
+                    print(
+                        'изображение для удаления не найдено(что странно).')
+                k += 1
 
 
 if __name__ == '__main__':

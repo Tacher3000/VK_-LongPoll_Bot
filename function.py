@@ -218,9 +218,11 @@ def diary():
     # отправляем файл каждому человеку из списка
     for j in range(count_lines('trusted_people.txt')):
         send_txt_file(
-            int(open_txt_line(j, 'trusted_people.txt')), 'мой дневник, сообщение оптравлено автоматически', 'diary.txt')
-        
+            int(open_txt_line(j, 'trusted_people.txt')), 'Мой дневник, сообщение оптравлено автоматически(возможно это ошибка, не спеши читать. И вообще не читай если не хочешь. Читай только в том случае если тебе не все равно).', 'diary.txt')
+
 # отправляет дневник самому себе
+
+
 def me_diary(id, message):
     # удаляем старый файл если он есть
     try:
@@ -244,19 +246,21 @@ def download_images_yadisk():
     day_of_week = current_date.weekday()
 
     path_to_day = {
-        '1': '/x18',
-        '2': '',
-        '3': '',
-        '4': '',
-        '5': '',
-        '6': '',
-        '7': '',
-
+        0 : '/mems',
+        1 : '/Screenshots',
+        2 : '/minecraft screenshots',
+        3 : '/mems',
+        4 : '/mems',
+        5 : '/Screenshots',
+        6 : '/minecraft screenshots',
     }
+    if day_of_week in path_to_day:
+        path = path_to_day[day_of_week]
+    else:
+        print('день не найден')
+        path = '/mems'
 
     photo_names = []
-
-    path = '/x18'
 
     for item in y.listdir(path):
         if item.type == 'file':
@@ -280,4 +284,4 @@ def add_diary(message):
         # Здесь можем выполнить несколько записей
         file.write(f'{message}\n\n')
 
-    y.upload('data/txt/diary.txt', '/diary.txt', overwrite = True)
+    y.upload('data/txt/diary.txt', '/diary.txt', overwrite=True)
