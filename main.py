@@ -39,6 +39,10 @@ class MyVkLongPoll(VkLongPoll):
                 # +1 день
                 f.mark1()
 
+                f.send_message(240453492, 'сколько сейчас дней')
+                f.send_message(240453492, f.passed())
+
+
                 # проверка на колличество дней
                 if int(f.passed()) >= warning and int(f.passed()) < deadline:
                     f.send_message(

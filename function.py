@@ -254,6 +254,8 @@ def download_images_yadisk():
         5 : '/Screenshots',
         6 : '/minecraft screenshots',
     }
+
+    # получаем путь от дня недели
     if day_of_week in path_to_day:
         path = path_to_day[day_of_week]
     else:
@@ -272,6 +274,7 @@ def download_images_yadisk():
 
 
 def add_diary(message):
+    # удаляем файл(если есть)
     try:
         os.remove('data/txt/diary.txt')
     except FileNotFoundError:
@@ -280,8 +283,9 @@ def add_diary(message):
     # скачиваем новый с яндекс диска
     y.download('/diary.txt', 'data/txt/diary.txt')
 
+    # добавляем запись
     with open('data/txt/diary.txt', 'a', encoding='utf-8') as file:
-        # Здесь можем выполнить несколько записей
         file.write(f'{message}\n\n')
 
+    # загружаем измененную версию на диск
     y.upload('data/txt/diary.txt', '/diary.txt', overwrite=True)
