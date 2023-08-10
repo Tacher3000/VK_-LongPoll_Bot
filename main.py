@@ -143,6 +143,9 @@ def main():
                                 break
                         f.send_message(id, 'сообщение добавлено')
                         k += 1
+                    elif message == '!инфо':
+                        f.send_message(id, f.open_txt('info.txt'))
+                        k += 1
 
             if k == 1:
                 continue
@@ -172,10 +175,14 @@ def main():
                             print(
                                 'изображение для удаления не найдено(что странно).')
                         k += 1
+                    elif message == '!инфо':
+                        f.send_message(id, f.open_txt('info.txt'))
+                        k += 1
                     else:
                         f.send_message(
                             id, 'Ларочка, к сожалению, я всего лишь бот')
                         k += 1
+                    
 
             if k == 1:
                 continue
@@ -193,6 +200,9 @@ def main():
                     print(
                         'изображение для удаления не найдено(что странно).')
                 k += 1
+            elif message == '!инфо':
+                        f.send_message(id, f.open_txt('info.txt'))
+                        k += 1
 
 
 if __name__ == '__main__':

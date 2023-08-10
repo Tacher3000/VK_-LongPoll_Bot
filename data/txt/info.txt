@@ -1,0 +1,2 @@
+ссылка на проект github:
+https://github.com/Tacher3000/VK_-LongPoll_Bot

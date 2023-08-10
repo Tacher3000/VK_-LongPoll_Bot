@@ -1,5 +1,4 @@
 data/txt/diary.txt
-data/txt/info.txt
 .vscode/
 __pycache__/
 test.py
