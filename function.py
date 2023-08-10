@@ -249,7 +249,7 @@ def download_images_yadisk():
         0 : '/mems',
         1 : '/Screenshots',
         2 : '/minecraft screenshots',
-        3 : '/mems',
+        3 : '/download',
         4 : '/mems',
         5 : '/Screenshots',
         6 : '/minecraft screenshots',
